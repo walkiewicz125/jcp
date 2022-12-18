@@ -1,0 +1,12 @@
+[
+{
+  "directory": "C:/programming/projects/jcp/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DWXUSINGDLL -D_FILE_OFFSET_BITS=64 -D__WXMSW__ -IC:/programming/projects/jcp/jcp/include -IC:/programming/projects/jcp/libs -isystem C:/msys64/mingw64/lib/wx/include/msw-unicode-3.2 -isystem C:/msys64/mingw64/include/wx-3.2 -O0 -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\JoystickCamProfiler.dir\\jcp\\source\\main.cpp.obj -c C:\\programming\\projects\\jcp\\jcp\\source\\main.cpp",
+  "file": "C:\\programming\\projects\\jcp\\jcp\\source\\main.cpp"
+},
+{
+  "directory": "C:/programming/projects/jcp/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DWXUSINGDLL -D_FILE_OFFSET_BITS=64 -D__WXMSW__ -IC:/programming/projects/jcp/jcp/include -IC:/programming/projects/jcp/libs -isystem C:/msys64/mingw64/lib/wx/include/msw-unicode-3.2 -isystem C:/msys64/mingw64/include/wx-3.2 -O0 -Wall -Wextra -g -std=gnu++17 -o CMakeFiles\\JoystickCamProfiler.dir\\libs\\mathplot\\mathplot.cpp.obj -c C:\\programming\\projects\\jcp\\libs\\mathplot\\mathplot.cpp",
+  "file": "C:\\programming\\projects\\jcp\\libs\\mathplot\\mathplot.cpp"
+}
+]
