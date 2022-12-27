@@ -38,6 +38,16 @@ public:
         plot_panel_->draw(cam_profile);
     }
 
+    cam_generator_config_t get_config() const
+    {
+        return ctrl_panel_->get_config();
+    }
+
+    void init_defaults(const cam_generator_config_t& cam_generator_config, size_t resolution)
+    {
+        ctrl_panel_->init_defaults(cam_generator_config, resolution);
+    }
+
 private:
     double sash_gravity_ = 0.5;
     int min_pane_size_ = 50;

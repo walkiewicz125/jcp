@@ -1,3 +1,0 @@
-C:/programming/projects/jcp/build/CMakeFiles/JoystickCamProfiler.dir
-C:/programming/projects/jcp/build/CMakeFiles/edit_cache.dir
-C:/programming/projects/jcp/build/CMakeFiles/rebuild_cache.dir
