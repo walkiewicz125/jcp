@@ -6,7 +6,7 @@
 #include <wx/wx.h>
 #include <mathplot/mathplot.h>
 
-#include "profile_generator.hpp"
+#include <cam/cam_profile.hpp>
 
 class points_frame : public mpFXY
 {   

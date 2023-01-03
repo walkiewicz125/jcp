@@ -5,9 +5,12 @@
 #include <wx/msgdlg.h>
 #include <wx/filedlg.h>
 
-#include "control_plot_panel.hpp"
-#include "profile_generator.hpp"
-#include "file_exporter.hpp"
+#include "view/control_plot_panel.hpp"
+#include "view/file_exporter.hpp"
+
+#include <cam/cam_generator_config.hpp>
+#include <cam/cam_generator.hpp>
+#include <cam/cam_profile.hpp>
 
 class MyFrame: public wxFrame, public cam_profile_view
 {

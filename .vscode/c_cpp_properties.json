@@ -9,7 +9,14 @@
                 "C:/msys64/mingw64/include/wx-3.2",
                 "${workspaceFolder}/libs",
                 "C:/msys64/mingw64/include/wx-3.2",
-                "C:/msys64/mingw64/include/wx-3.2"
+                "C:/msys64/mingw64/include/wx-3.2",
+                "${workspaceFolder}\\libs",
+                "C:/programming/projects/jcp/libs",
+                "${workspaceFolder}\\libs",
+                "libs",
+                "C:/msys64/mingw64/include/wx-3.2",
+                "C:/msys64/mingw64/include/wx-3.2",
+                "C:/msys64/mingw64/lib/wx/include/msw-unicode-3.2"
             ],
             "defines": [
                 "_DEBUG",
@@ -21,17 +28,19 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-gcc-x64",
-            "configurationProvider": "ms-vscode.cmake-tools",
             "browse": {
                 "path": [
                     "C:/msys64/mingw64/include/wx-3.2/",
                     "C:/msys64/mingw64/include/wx-3.2/**",
-                    "${workspaceFolder}/libs/**"
+                    "${workspaceFolder}/libs/**",
+                    "${workspaceFolder}/libs/",
+                    "libs"
                 ]
             },
             "compilerArgs": [
                 "-I\"C:/msys64/mingw64/include/wx-3.2\""
-            ]
+            ],
+            "mergeConfigurations": false
         }
     ],
     "version": 4

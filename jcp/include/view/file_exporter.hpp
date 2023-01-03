@@ -5,7 +5,7 @@
 #include <wx/wx.h>
 #include <wx/file.h>
 
-#include "profile_generator.hpp"
+#include <cam/cam_profile.hpp>
 
 
 class csv_file_exporter

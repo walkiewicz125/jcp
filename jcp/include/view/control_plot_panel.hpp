@@ -6,7 +6,7 @@
 #include "plot_panel.hpp"
 #include "control_panel.hpp"
 
-#include "profile_generator.hpp"
+#include <cam/cam_profile.hpp>
 
 class ControlPlotViewPanel: public wxPanel, public cam_profile_view
 {
