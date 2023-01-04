@@ -6,26 +6,50 @@
 #include <wykobi/wykobi.hpp>
 #include <vector>
 
-struct profile_t
+using point_t = wykobi::point2d<float>;
+
+class profile_t
 {
-    using profile_collection_t = std::vector<wykobi::point2d<float>>;
+public:
+    using iterator = std::vector<point_t>::iterator;
+    using const_iterator = std::vector<point_t>::const_iterator;
+    using reverse_iterator = std::vector<point_t>::reverse_iterator;
+    using const_reverse_iterator = std::vector<point_t>::const_reverse_iterator;
 
-    profile_t(profile_collection_t points)
-    : points_(points)
+    profile_t(size_t resolution)
+    : points_(resolution + 1)
     {
     }
+    profile_t(const profile_t& other) = default;
+    profile_t(profile_t&& other) = default;
+    profile_t& operator=(profile_t&& other) = default;
 
-    profile_collection_t::const_iterator begin() const
+    std::vector<point_t>::iterator begin() 
     {
-        return points_.cbegin();
+        return points_.begin();
     }
 
-    profile_collection_t::const_iterator middle() const
+    std::vector<point_t>::iterator middle() 
     {   
         return points_.begin() + points_.size()/2;
     }
 
-    profile_collection_t::const_iterator end() const
+    std::vector<point_t>::iterator end() 
+    {
+        return points_.end();
+    }
+
+    std::vector<point_t>::const_iterator begin() const
+    {
+        return points_.cbegin();
+    }
+
+    std::vector<point_t>::const_iterator middle() const
+    {   
+        return points_.cbegin() + points_.size()/2;
+    }
+
+    std::vector<point_t>::const_iterator end() const
     {
         return points_.cend();
     }
@@ -33,40 +57,31 @@ struct profile_t
     size_t size() const
     {
         return points_.size();
-    }
+    }    
 
 private:
 
-    profile_collection_t points_;   
+    std::vector<point_t> points_;  
 };
 
-struct cam_profile_t
+struct assembly_profiles_t
 {
-    using profile_points_t = std::vector<wykobi::point2d<float>>;
-
-    profile_points_t cam_points_;
-    profile_points_t joystick_points_;
-    
-    wykobi::point2d<float> cam_pivot_;
-    wykobi::point2d<float> joystick_pivot_;
-
-    cam_generator_config_t cam_generator_config_;
-
-    size_t middle_point_index_;
-
-    void reserve(size_t resolution)
+    assembly_profiles_t(const profile_t cam_path, 
+                        const profile_t joystick_path,
+                        const point_t cam_pivot, 
+                        const point_t joystick_pivot)
+    : cam_path_(std::move(cam_path)), 
+      joystick_path_(joystick_path), 
+      cam_pivot_(cam_pivot), 
+      joystick_pivot_(joystick_pivot)
     {
-        size_t points_count = 2 * resolution + 1;
-        cam_points_.resize(points_count);
-        joystick_points_.resize(points_count);
     }
-};
 
-class cam_profile_view
-{
-public:
-    virtual ~cam_profile_view() { }
-    virtual void draw(const cam_profile_t& cam_profile) = 0;
+    const profile_t cam_path_;
+    const profile_t joystick_path_;
+ 
+    const point_t cam_pivot_;
+    const point_t joystick_pivot_;    
 };
 
 #endif // JCP_CAM_PROFILE_HPP

@@ -3,15 +3,19 @@
 
 #include <wykobi/wykobi.hpp>
 
+using point_t = wykobi::point2d<float>;
+
 struct cam_generator_config_t
 {
     float cam_gimbal_range_;
-    wykobi::point2d<float> cam_pivot_;
+    point_t cam_pivot_;
     // TODO: wykobi::point2d<float> cam_end_point_;
 
-    wykobi::point2d<float> joystick_pivot_;
+    point_t joystick_pivot_;
     float joystick_lever_length_;
     float joystick_gimbal_range_;
+
+    size_t resolution_;
 
     static cam_generator_config_t get_default()
     {
@@ -21,7 +25,7 @@ struct cam_generator_config_t
         conf.joystick_gimbal_range_ = 30.0f;
         conf.joystick_lever_length_ = 100.0f;
         conf.joystick_pivot_ = wykobi::make_point<float>(0.0f, 0.0f);
-
+        conf.resolution_ = 1000;
         return conf;
     }
 };
