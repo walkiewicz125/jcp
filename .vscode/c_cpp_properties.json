@@ -16,7 +16,8 @@
                 "libs",
                 "C:/msys64/mingw64/include/wx-3.2",
                 "C:/msys64/mingw64/include/wx-3.2",
-                "C:/msys64/mingw64/lib/wx/include/msw-unicode-3.2"
+                "C:/msys64/mingw64/lib/wx/include/msw-unicode-3.2",
+                "${workspaceFolder}\\jcp",
             ],
             "defines": [
                 "_DEBUG",
@@ -34,7 +35,8 @@
                     "C:/msys64/mingw64/include/wx-3.2/**",
                     "${workspaceFolder}/libs/**",
                     "${workspaceFolder}/libs/",
-                    "libs"
+                    "libs",
+                    "${workspaceFolder}\\jcp",
                 ]
             },
             "compilerArgs": [

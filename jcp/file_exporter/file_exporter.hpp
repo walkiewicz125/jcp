@@ -47,7 +47,7 @@ public:
 
     }
 
-    size_t write_point(const wykobi::point2d<float>& profile_point)
+    size_t write_point(const point_t& profile_point)
     {
         wxString point_as_text = wxString::Format(wxT("%f,%f,%f\n"), profile_point.x,  profile_point.y, 0.0f);
         file_exporter_ << point_as_text;
@@ -55,7 +55,7 @@ public:
         return point_as_text.size();
     }
 
-    size_t write_profile(const cam_profile_t::profile_points_t& profile_points)
+    size_t write_profile(const profile_t& profile_points)
     {
         size_t size;
         

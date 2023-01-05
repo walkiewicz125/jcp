@@ -20,7 +20,7 @@ if(wxWidgets_FOUND)
 
 	target_include_directories(JoystickCamProfiler
 		PRIVATE
-		"${PROJECT_SOURCE_DIR}/jcp/include"
+		"${PROJECT_SOURCE_DIR}/jcp"
 		"${PROJECT_SOURCE_DIR}/libs"
 	)
 

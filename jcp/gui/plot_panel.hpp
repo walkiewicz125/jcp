@@ -9,19 +9,20 @@
 #include <cam/cam_profile.hpp>
 
 class points_frame : public mpFXY
-{   
+{
 public:
-    points_frame()
-        : mpFXY(wxT("profile_frame0")), index_(0)
+    points_frame(const profile_t& profile)
+        : mpFXY(wxT("profile_frame0")), index_(0),
+          profile_(profile)
     {
     }
 
     virtual bool GetNextXY(double& x, double& y)
     {
-        if (index_ < profile_points_.size())
+        if (index_ < profile_.size())
         {
-            x = profile_points_[index_].x;
-            y = profile_points_[index_].y;
+            x = profile_[index_].x;
+            y = profile_[index_].y;
             index_++;
             return true;
         }
@@ -29,19 +30,17 @@ public:
         {
             return false;
         }
-    
+
     }
 
-    void set_points(const cam_profile_t::profile_points_t& points)
+    void update_min_max()
     {
-        profile_points_ = points;
+        min_x_ = profile_[0].x;
+        max_x_ = profile_[0].x;
+        min_y_ = profile_[0].y;
+        max_y_ = profile_[0].y;
 
-        min_x_ = points[0].x;
-        max_x_ = points[0].x;
-        min_y_ = points[0].y;
-        max_y_ = points[0].y;
-
-        for (const auto& point : points)
+        for (const auto& point : profile_)
         {
             min_x_ = std::min<double>(min_x_, point.x);
             max_x_ = std::max<double>(max_x_, point.x);
@@ -50,15 +49,15 @@ public:
         }
     }
 
-   virtual void Rewind() { index_ = 0; }
-   virtual double GetMinX() { return min_x_; }
-   virtual double GetMaxX() { return max_x_; }
-   virtual double GetMinY() { return min_y_; }
-   virtual double GetMaxY() { return max_y_; }
+    virtual void Rewind() { index_ = 0; }
+    virtual double GetMinX() { update_min_max(); return min_x_; }
+    virtual double GetMaxX() { update_min_max(); return max_x_; }
+    virtual double GetMinY() { update_min_max(); return min_y_; }
+    virtual double GetMaxY() { update_min_max(); return max_y_; }
 
 private:
     size_t index_;
-    cam_profile_t::profile_points_t profile_points_;
+    const profile_t& profile_;
 
     double min_x_;
     double max_x_;
@@ -66,59 +65,47 @@ private:
     double max_y_;
 };
 
-class PlotPanel: public wxPanel, public cam_profile_view
+class PlotPanel: public wxPanel
 {
 public:
-    PlotPanel(wxWindow *parent,
+    PlotPanel(const assembly_profiles_t& profile,
+              wxWindow *parent,
               wxWindowID winid = wxID_ANY,
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = wxTAB_TRAVERSAL | wxNO_BORDER)
-        : wxPanel(parent, winid, pos, size, style)
+        : wxPanel(parent, winid, pos, size, style),
+          profile_(profile)
     {
         main_sizer_vertical_ = new wxBoxSizer(wxVERTICAL);
         neasted_sizer_horizontal_ = new wxBoxSizer(wxHORIZONTAL);
 
         mathplot_ = new mpWindow(this, wxID_ANY);
-        
-        
+
+
         wxPen mypen(*wxRED, 5, wxPENSTYLE_SOLID);
-        joystick_points_frame_ = new points_frame();
+        joystick_points_frame_ = new points_frame(profile_.joystick_path_);
         joystick_points_frame_->SetPen(mypen);
         mathplot_->AddLayer(joystick_points_frame_);
 
-        
+
         wxPen mypen2(*wxGREEN, 5, wxPENSTYLE_SOLID);
-        cam_points_frame_ = new points_frame();
+        cam_points_frame_ = new points_frame(profile_.cam_path_);
         cam_points_frame_->SetPen(mypen2);
         mathplot_->AddLayer(cam_points_frame_);
 
-
-        pivots_.reserve(2);
-        wxPen mypen3(*wxBLUE, 5, wxPENSTYLE_SOLID);
-        pivots_frame_ = new points_frame();
-        pivots_frame_->SetPen(mypen3);
-        mathplot_->AddLayer(pivots_frame_);
-
         joystick_points_frame_->SetName(wxT("joystick"));
         cam_points_frame_->SetName(wxT("cam"));
-        pivots_frame_->SetName(wxT("pivots"));
 
-        neasted_sizer_horizontal_->Add(mathplot_, 1, wxEXPAND);        
+        neasted_sizer_horizontal_->Add(mathplot_, 1, wxEXPAND);
         main_sizer_vertical_->Add(neasted_sizer_horizontal_, 1, wxEXPAND);
-        this->SetSizer(main_sizer_vertical_);      
+        this->SetSizer(main_sizer_vertical_);
     }
 
-    virtual void draw(const cam_profile_t& cam_profile)
+    virtual void draw()
     {
-        joystick_points_frame_->set_points(cam_profile.joystick_points_);
-        cam_points_frame_->set_points(cam_profile.cam_points_);
-        
-        pivots_.clear();
-        pivots_.push_back(cam_profile.cam_pivot_);
-        pivots_.push_back(cam_profile.joystick_pivot_);
-        pivots_frame_->set_points(pivots_);
-
+        joystick_points_frame_->update_min_max();
+        cam_points_frame_->update_min_max();
         mathplot_->Fit();
         mathplot_->LockAspect();
         mathplot_->ZoomOut();
@@ -130,8 +117,7 @@ private:
     wxSizer* main_sizer_vertical_;
     points_frame* joystick_points_frame_;
     points_frame* cam_points_frame_;
-    cam_profile_t::profile_points_t pivots_;
-    points_frame* pivots_frame_;
+    const assembly_profiles_t& profile_;
 };
 
 #endif // JCP_PLOT_PANEL

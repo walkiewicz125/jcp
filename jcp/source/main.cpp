@@ -5,20 +5,22 @@
 #include <wx/msgdlg.h>
 #include <wx/filedlg.h>
 
-#include "view/control_plot_panel.hpp"
-#include "view/file_exporter.hpp"
+#include <sstream>
+
+#include <gui/control_plot_panel.hpp>
+#include <file_exporter/file_exporter.hpp>
 
 #include <cam/cam_generator_config.hpp>
 #include <cam/cam_generator.hpp>
-#include <cam/cam_profile.hpp>
 
-class MyFrame: public wxFrame, public cam_profile_view
+class MyFrame: public wxFrame
 {
 public:
-    MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
+    MyFrame(const assembly_profiles_t& profiles,
+            const wxString& title, const wxPoint& pos, const wxSize& size)
         : wxFrame(NULL, wxID_ANY, title, pos, size)
     {
-        panel_ = new ControlPlotViewPanel(this, wxID_ANY);
+        panel_ = new ControlPlotViewPanel(profiles, this, wxID_ANY);
 
         sizer_ = new wxBoxSizer(wxHORIZONTAL);
         sizer_->Add(panel_, 1, wxEXPAND, 0);
@@ -31,9 +33,9 @@ public:
         SetMinSize(wxSize(600, 400));
     }
 
-    virtual void draw(const cam_profile_t& cam_profile)
+    virtual void draw()
     {
-        panel_->draw(cam_profile);
+        panel_->draw();
     }
 
     cam_generator_config_t get_config() const
@@ -55,13 +57,14 @@ class MyApp: public wxApp
 {
 public:
     MyApp()
-    : cam_generator_(cam_generator_config_)
     {
     }
 
     virtual bool OnInit()
     {
-        frame_ = new MyFrame( "JoystickCamProfiler", wxPoint(50, 50), wxSize(450, 340) );
+        frame_ = new MyFrame(profiles_,
+                             "JoystickCamProfiler",
+                             wxPoint(50, 50), wxSize(450, 340));
         frame_->Show( true );
 
         Bind(wxEVT_BUTTON, &MyApp::OnApplyButton, this, JCP_APPLY_BTN);
@@ -82,7 +85,6 @@ public:
 
     void OnExportButton(wxCommandEvent& event)
     {
-
         wxString CurrentDocPath;
 
         wxDirDialog* OpenDialog = new wxDirDialog(
@@ -97,10 +99,10 @@ public:
 
         csv_profile_exporter exporter(CurrentDocPath + "\\" + file_name);
 
-        exporter.write_profile(cam_generator_.generate_profile(resolution_).cam_points_);
+        // exporter.write_profile(cam_generator_.generate_profile(resolution_).cam_points_);
 
         OpenDialog->Destroy();
-        
+
 
         wxMessageDialog open_dir_box(nullptr, "Open containing folder", "Files export complete", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
         open_dir_box.SetYesNoLabels(_("&Show in folder"), _("&Done"));
@@ -114,13 +116,16 @@ private:
     void update()
     {
         cam_generator_config_ = frame_->get_config();
-        frame_->draw(cam_generator_.generate_profile(resolution_));
+        profiles_ = std::move(cam_generator_.generate(cam_generator_config_));
+
+        frame_->draw();
     }
 
     MyFrame* frame_;
     size_t resolution_ = 100;
     cam_generator_config_t cam_generator_config_;
-    cam_generator cam_generator_;
+    profiles_generator cam_generator_;
+    assembly_profiles_t profiles_;
 };
 
 wxIMPLEMENT_APP(MyApp);

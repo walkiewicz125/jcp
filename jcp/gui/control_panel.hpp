@@ -2,6 +2,7 @@
 #define JCP_CONTROL_PANEL
 
 #include <wx/wx.h>
+#include <wx/propgrid/propgrid.h>
 #include "window_id.hpp"
 
 struct property_grid_props
@@ -13,7 +14,7 @@ struct property_grid_props
     wxPGProperty* joystick_pivot_;
     wxPGProperty* joystick_pivot_x_;
     wxPGProperty* joystick_pivot_y_;
-    
+
     wxPGProperty* cam_gimbal_range_;
     wxPGProperty* joystick_gimbal_range_;
     wxPGProperty* joystick_lever_length_;
@@ -46,20 +47,20 @@ public:
         // allows displaying help strings as tool tips.
         property_grid_->SetExtraStyle( wxPG_EX_HELP_AS_TOOLTIPS );
         property_grid_->Sort(wxPG_KEEP_STRUCTURE|wxPG_FORCE);
-        
+
         props_.cam_pivot_ = property_grid_->Append(
             new wxStringProperty("Cam pivot", wxPG_LABEL, "<composed>"));
         props_.cam_pivot_x_ = property_grid_->AppendIn(props_.cam_pivot_, new wxFloatProperty("X", "x", 0.0));
         props_.cam_pivot_y_ = property_grid_->AppendIn(props_.cam_pivot_, new wxFloatProperty("y", "y", 0.0));
-        
+
         props_.joystick_pivot_ = property_grid_->Append(
             new wxStringProperty("Joystick pivot", wxPG_LABEL, "<composed>"));
         props_.joystick_pivot_x_ = property_grid_->AppendIn(props_.joystick_pivot_, new wxFloatProperty("X", "x", 0.0));
         props_.joystick_pivot_y_ = property_grid_->AppendIn(props_.joystick_pivot_, new wxFloatProperty("y", "y", 0.0));
-        
-        props_.cam_gimbal_range_ = property_grid_->Append(new wxFloatProperty("Cam gimbal range", "cam_gimbal_range", 0.0));        
+
+        props_.cam_gimbal_range_ = property_grid_->Append(new wxFloatProperty("Cam gimbal range", "cam_gimbal_range", 0.0));
         props_.joystick_gimbal_range_ = property_grid_->Append(new wxFloatProperty("Joystick gimbal range", "joystick_gimbal_range", 0.0));
-        props_.joystick_lever_length_ = property_grid_->Append(new wxFloatProperty("Joystick leaver length", "joystick_lever_length", 0.0));        
+        props_.joystick_lever_length_ = property_grid_->Append(new wxFloatProperty("Joystick leaver length", "joystick_lever_length", 0.0));
         props_.resolution_ = property_grid_->Append(new wxUIntProperty("Resolution", "resolution", 0.0));
 
         property_grid_->SetMinSize(wxSize(200, 50));
@@ -74,9 +75,9 @@ public:
         main_sizer_ = new wxBoxSizer(wxVERTICAL);
         main_sizer_->Add(property_grid_, 1, wxEXPAND);
         main_sizer_->Add(button_sizer_, 0, wxEXPAND);
-        this->SetSizer(main_sizer_);      
+        this->SetSizer(main_sizer_);
     }
-    
+
     cam_generator_config_t get_config() const
     {
         cam_generator_config_t new_config = {};
@@ -87,10 +88,12 @@ public:
         new_config.joystick_pivot_.x = property_grid_->GetPropertyValue(props_.joystick_pivot_x_).GetDouble();
         new_config.joystick_pivot_.y = property_grid_->GetPropertyValue(props_.joystick_pivot_y_).GetDouble();
 
-        
+
         new_config.cam_gimbal_range_ = property_grid_->GetPropertyValue(props_.cam_gimbal_range_).GetDouble();
         new_config.joystick_gimbal_range_ = property_grid_->GetPropertyValue(props_.joystick_gimbal_range_).GetDouble();
         new_config.joystick_lever_length_ = property_grid_->GetPropertyValue(props_.joystick_lever_length_).GetDouble();
+
+        new_config.resolution_ = property_grid_->GetPropertyValue(props_.resolution_).GetInteger();
 
         return new_config;
     }
@@ -110,7 +113,7 @@ public:
 private:
     wxPropertyGrid* property_grid_;
     property_grid_props props_;
-    wxSizer* button_sizer_; 
+    wxSizer* button_sizer_;
     wxButton* apply_button_;
     wxButton* export_button_;
     wxSizer* main_sizer_;
