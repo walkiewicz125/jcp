@@ -95,11 +95,12 @@ public:
             CurrentDocPath = OpenDialog->GetPath();
         }
 
-        wxString file_name("profile.csv");
+        wxString file_name_left(CurrentDocPath + "\\cam_profile_left.csv");
+        wxString file_name_right(CurrentDocPath + "\\cam_profile_right.csv");
 
-        csv_profile_exporter exporter(CurrentDocPath + "\\" + file_name);
+        csv_profile_exporter exporter(file_name_left, file_name_right);
 
-        // exporter.write_profile(cam_generator_.generate_profile(resolution_).cam_points_);
+        exporter.write_profile(profiles_.cam_path_);
 
         OpenDialog->Destroy();
 

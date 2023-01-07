@@ -97,6 +97,22 @@ public:
         joystick_points_frame_->SetName(wxT("joystick"));
         cam_points_frame_->SetName(wxT("cam"));
 
+
+        wxFont graphFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+        xaxis_layer_ = new mpScaleX(wxT("X"), mpALIGN_BOTTOM, false, mpX_NORMAL);
+        yaxis_layer_ = new mpScaleY(wxT("Y"), mpALIGN_LEFT, false);
+        xaxis_layer_->SetFont(graphFont);
+        yaxis_layer_->SetFont(graphFont);
+        xaxis_layer_->SetDrawOutsideMargins(false);
+        yaxis_layer_->SetDrawOutsideMargins(false);
+        // Fake axes formatting to test arbitrary format string
+        // xaxis_layer_->SetLabelFormat(wxT("%.2f €"));
+        // yaxis_layer_->SetLabelFormat(wxT("%p"));
+        mathplot_->SetMargins(30, 30, 50, 100);
+    //     m_plot->SetMargins(50, 50, 200, 150);
+        mathplot_->AddLayer(xaxis_layer_);
+        mathplot_->AddLayer(yaxis_layer_);
+
         neasted_sizer_horizontal_->Add(mathplot_, 1, wxEXPAND);
         main_sizer_vertical_->Add(neasted_sizer_horizontal_, 1, wxEXPAND);
         this->SetSizer(main_sizer_vertical_);
@@ -106,9 +122,8 @@ public:
     {
         joystick_points_frame_->update_min_max();
         cam_points_frame_->update_min_max();
-        mathplot_->Fit();
         mathplot_->LockAspect();
-        mathplot_->ZoomOut();
+        mathplot_->Fit();
     }
 
 private:
@@ -117,6 +132,8 @@ private:
     wxSizer* main_sizer_vertical_;
     points_frame* joystick_points_frame_;
     points_frame* cam_points_frame_;
+    mpScaleX* xaxis_layer_;
+    mpScaleY* yaxis_layer_;
     const assembly_profiles_t& profile_;
 };
 

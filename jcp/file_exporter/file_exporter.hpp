@@ -29,7 +29,7 @@ private:
     {
         file_.Write(text);
         file_.Flush();
-    
+
         return text.size();
     }
 
@@ -41,35 +41,38 @@ class csv_profile_exporter
 {
 
 public:
-    csv_profile_exporter(const wxString &filename)
-    : file_exporter_(filename)
+    csv_profile_exporter(const wxString &filename_left, const wxString &filename_right)
+    : file_exporter_left_half_(filename_left),
+      file_exporter_right_half_(filename_right)
     {
 
-    }
-
-    size_t write_point(const point_t& profile_point)
-    {
-        wxString point_as_text = wxString::Format(wxT("%f,%f,%f\n"), profile_point.x,  profile_point.y, 0.0f);
-        file_exporter_ << point_as_text;
-
-        return point_as_text.size();
     }
 
     size_t write_profile(const profile_t& profile_points)
     {
-        size_t size;
-        
-        for (const auto& point : profile_points)
+        size_t size{0};
+
+        wxString txt;
+        for (auto point_it = profile_points.begin(); point_it != (profile_points.middle() + 1); point_it++)
         {
-            size += write_point(point);
+            txt = wxString::Format(wxT("%f,%f,%f\n"), point_it->x,  point_it->y, 0.0f);
+            file_exporter_left_half_ << txt;
+            size += txt.size();
+        }
+
+        for (auto point_it = profile_points.middle(); point_it != profile_points.end(); point_it++)
+        {
+            txt = wxString::Format(wxT("%f,%f,%f\n"), point_it->x,  point_it->y, 0.0f);
+            file_exporter_right_half_ << txt;
+            size += txt.size();
         }
 
         return size;
     }
 
 private:
-
-    csv_file_exporter file_exporter_;
+    csv_file_exporter file_exporter_left_half_;
+    csv_file_exporter file_exporter_right_half_;
 };
 
 #endif // FILE_EXPORTER_HPP
