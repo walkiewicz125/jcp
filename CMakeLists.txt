@@ -11,7 +11,7 @@ set(SOURCES
 
 find_package(wxWidgets REQUIRED base core propgrid OPTIONAL_COMPONENTS )
 
-set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-O0 -g -Wall -Wextra")
 
 if(wxWidgets_FOUND)
 	include(${wxWidgets_USE_FILE})

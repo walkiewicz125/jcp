@@ -12,14 +12,12 @@
 class ControlPlotViewPanel: public wxPanel
 {
 public:
-    ControlPlotViewPanel(const assembly_profiles_t& profile,
-                         wxWindow *parent,
+    ControlPlotViewPanel(wxWindow *parent,
                          wxWindowID winid = wxID_ANY,
                          const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
                          long style = wxTAB_TRAVERSAL | wxNO_BORDER)
-        : wxPanel(parent, winid, pos, size, style),
-          profile_(profile)
+        : wxPanel(parent, winid, pos, size, style)
     {
         control_plot_splitter_ = new wxSplitterWindow(this, wxID_ANY);
         control_plot_splitter_->SetSashGravity(sash_gravity_);
@@ -29,16 +27,16 @@ public:
         main_sizer_->Add(control_plot_splitter_, 1, wxEXPAND, 0);
 
         ctrl_panel_ = new ControlPanel(control_plot_splitter_, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
-        plot_panel_ = new PlotPanel(profile, control_plot_splitter_, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
+        plot_panel_ = new PlotPanel(control_plot_splitter_, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
 
         control_plot_splitter_->SplitVertically(ctrl_panel_, plot_panel_);
 
         this->SetSizer(main_sizer_);
     }
 
-    virtual void draw()
+    virtual void draw(const assembly_profiles_t& profiles)
     {
-        plot_panel_->draw();
+        plot_panel_->draw(profiles);
     }
 
     cam_generator_config_t get_config() const
@@ -46,9 +44,9 @@ public:
         return ctrl_panel_->get_config();
     }
 
-    void init_defaults(const cam_generator_config_t& cam_generator_config, size_t resolution)
+    void init_defaults(const cam_generator_config_t& cam_generator_config)
     {
-        ctrl_panel_->init_defaults(cam_generator_config, resolution);
+        ctrl_panel_->init_defaults(cam_generator_config);
     }
 
 private:
@@ -59,7 +57,6 @@ private:
     PlotPanel* plot_panel_;
     wxSplitterWindow* control_plot_splitter_;
     wxSizer* main_sizer_;
-    const assembly_profiles_t& profile_;
 };
 
 #endif // JCP_CONTROL_PLOT_PANEL

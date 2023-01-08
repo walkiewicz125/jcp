@@ -98,7 +98,7 @@ public:
         return new_config;
     }
 
-    void init_defaults(const cam_generator_config_t& config, size_t resolution)
+    void init_defaults(const cam_generator_config_t& config)
     {
         property_grid_->SetPropertyValue(props_.cam_pivot_x_, config.cam_pivot_.x);
         property_grid_->SetPropertyValue(props_.cam_pivot_y_, config.cam_pivot_.y);
@@ -107,7 +107,7 @@ public:
         property_grid_->SetPropertyValue(props_.cam_gimbal_range_, config.cam_gimbal_range_);
         property_grid_->SetPropertyValue(props_.joystick_gimbal_range_, config.joystick_gimbal_range_);
         property_grid_->SetPropertyValue(props_.joystick_lever_length_, config.joystick_lever_length_);
-        property_grid_->SetPropertyValue(props_.resolution_, resolution); // TODO: fix
+        property_grid_->SetPropertyValue(props_.resolution_, config.resolution_);
     }
 
 private:

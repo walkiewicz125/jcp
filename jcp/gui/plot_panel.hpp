@@ -8,74 +8,45 @@
 
 #include <cam/cam_profile.hpp>
 
-class points_frame : public mpFXY
+class profile_frame : public mpFXYVector
 {
 public:
-    points_frame(const profile_t& profile)
-        : mpFXY(wxT("profile_frame0")), index_(0),
-          profile_(profile)
+    profile_frame(wxString name = wxEmptyString,
+                  int flags = mpALIGN_NE)
+    : mpFXYVector(name, flags)
     {
     }
 
-    virtual bool GetNextXY(double& x, double& y)
+    void update(const profile_t& profile)
     {
-        if (index_ < profile_.size())
+        xs_.clear();
+        ys_.clear();
+        xs_.resize(profile.size());
+        ys_.resize(profile.size());
+
+        for (size_t i = 0; i < profile.size(); i++)
         {
-            x = profile_[index_].x;
-            y = profile_[index_].y;
-            index_++;
-            return true;
-        }
-        else
-        {
-            return false;
+            xs_[i] = profile[i].x;
+            ys_[i] = profile[i].y;
         }
 
+        SetData(xs_, ys_);
     }
-
-    void update_min_max()
-    {
-        min_x_ = profile_[0].x;
-        max_x_ = profile_[0].x;
-        min_y_ = profile_[0].y;
-        max_y_ = profile_[0].y;
-
-        for (const auto& point : profile_)
-        {
-            min_x_ = std::min<double>(min_x_, point.x);
-            max_x_ = std::max<double>(max_x_, point.x);
-            min_y_ = std::min<double>(min_y_, point.y);
-            max_y_ = std::max<double>(max_y_, point.y);
-        }
-    }
-
-    virtual void Rewind() { index_ = 0; }
-    virtual double GetMinX() { update_min_max(); return min_x_; }
-    virtual double GetMaxX() { update_min_max(); return max_x_; }
-    virtual double GetMinY() { update_min_max(); return min_y_; }
-    virtual double GetMaxY() { update_min_max(); return max_y_; }
 
 private:
-    size_t index_;
-    const profile_t& profile_;
-
-    double min_x_;
-    double max_x_;
-    double min_y_;
-    double max_y_;
+    std::vector<double> xs_;
+    std::vector<double> ys_;
 };
 
 class PlotPanel: public wxPanel
 {
 public:
-    PlotPanel(const assembly_profiles_t& profile,
-              wxWindow *parent,
+    PlotPanel(wxWindow *parent,
               wxWindowID winid = wxID_ANY,
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = wxTAB_TRAVERSAL | wxNO_BORDER)
-        : wxPanel(parent, winid, pos, size, style),
-          profile_(profile)
+        : wxPanel(parent, winid, pos, size, style)
     {
         main_sizer_vertical_ = new wxBoxSizer(wxVERTICAL);
         neasted_sizer_horizontal_ = new wxBoxSizer(wxHORIZONTAL);
@@ -84,13 +55,13 @@ public:
 
 
         wxPen mypen(*wxRED, 5, wxPENSTYLE_SOLID);
-        joystick_points_frame_ = new points_frame(profile_.joystick_path_);
+        joystick_points_frame_ = new profile_frame();
         joystick_points_frame_->SetPen(mypen);
         mathplot_->AddLayer(joystick_points_frame_);
 
 
         wxPen mypen2(*wxGREEN, 5, wxPENSTYLE_SOLID);
-        cam_points_frame_ = new points_frame(profile_.cam_path_);
+        cam_points_frame_ = new profile_frame();
         cam_points_frame_->SetPen(mypen2);
         mathplot_->AddLayer(cam_points_frame_);
 
@@ -118,10 +89,11 @@ public:
         this->SetSizer(main_sizer_vertical_);
     }
 
-    virtual void draw()
+    virtual void draw(const assembly_profiles_t& profiles)
     {
-        joystick_points_frame_->update_min_max();
-        cam_points_frame_->update_min_max();
+        joystick_points_frame_->update(profiles.joystick_path_);
+        cam_points_frame_->update(profiles.cam_path_);
+        mathplot_->Refresh();
         mathplot_->LockAspect();
         mathplot_->Fit();
     }
@@ -130,11 +102,10 @@ private:
     mpWindow* mathplot_;
     wxSizer* neasted_sizer_horizontal_;
     wxSizer* main_sizer_vertical_;
-    points_frame* joystick_points_frame_;
-    points_frame* cam_points_frame_;
+    profile_frame* joystick_points_frame_;
+    profile_frame* cam_points_frame_;
     mpScaleX* xaxis_layer_;
     mpScaleY* yaxis_layer_;
-    const assembly_profiles_t& profile_;
 };
 
 #endif // JCP_PLOT_PANEL

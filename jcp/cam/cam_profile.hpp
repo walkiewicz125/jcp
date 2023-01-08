@@ -20,48 +20,48 @@ public:
     : points_(2 * resolution + 1)
     {
     }
-    profile_t(const profile_t& other)
-    : points_(other.points_)
-    {
-    }
+    profile_t(const profile_t& other) = delete;
+    profile_t& operator=(const profile_t& other) = delete;
 
     profile_t(profile_t&& other)
     : points_(std::move(other.points_))
     {
+        other.points_.clear();
     }
 
     profile_t& operator=(profile_t&& other)
     {
         points_ = std::move(other.points_);
+        other.points_.clear();
         return *this;
     }
 
-    std::vector<point_t>::iterator begin()
+    iterator begin()
     {
         return points_.begin();
     }
 
-    std::vector<point_t>::iterator middle()
+    iterator middle()
     {
         return points_.begin() + points_.size()/2;
     }
 
-    std::vector<point_t>::iterator end()
+    iterator end()
     {
         return points_.end();
     }
 
-    std::vector<point_t>::const_iterator begin() const
+    const_iterator begin() const
     {
         return points_.cbegin();
     }
 
-    std::vector<point_t>::const_iterator middle() const
+    const_iterator middle() const
     {
         return points_.cbegin() + points_.size()/2;
     }
 
-    std::vector<point_t>::const_iterator end() const
+    const_iterator end() const
     {
         return points_.cend();
     }
@@ -77,7 +77,6 @@ public:
     }
 
 private:
-
     std::vector<point_t> points_;
 };
 
@@ -94,8 +93,6 @@ struct assembly_profiles_t
     {
     }
 
-    assembly_profiles_t() = default;
-    assembly_profiles_t(const assembly_profiles_t& other) = default;
     assembly_profiles_t(assembly_profiles_t&& other)
     : cam_path_(std::move(other.cam_path_)),
       joystick_path_(std::move(other.joystick_path_)),
@@ -114,6 +111,10 @@ struct assembly_profiles_t
 
         return *this;
     }
+
+    assembly_profiles_t() = default;
+    assembly_profiles_t(const assembly_profiles_t&) = delete;
+    assembly_profiles_t& operator=(assembly_profiles_t&) = delete;
 
     profile_t cam_path_;
     profile_t joystick_path_;

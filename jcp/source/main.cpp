@@ -20,7 +20,7 @@ public:
             const wxString& title, const wxPoint& pos, const wxSize& size)
         : wxFrame(NULL, wxID_ANY, title, pos, size)
     {
-        panel_ = new ControlPlotViewPanel(profiles, this, wxID_ANY);
+        panel_ = new ControlPlotViewPanel(this, wxID_ANY);
 
         sizer_ = new wxBoxSizer(wxHORIZONTAL);
         sizer_->Add(panel_, 1, wxEXPAND, 0);
@@ -33,9 +33,9 @@ public:
         SetMinSize(wxSize(600, 400));
     }
 
-    virtual void draw()
+    virtual void draw(const assembly_profiles_t& profiles)
     {
-        panel_->draw();
+        panel_->draw(profiles);
     }
 
     cam_generator_config_t get_config() const
@@ -43,9 +43,9 @@ public:
         return panel_->get_config();
     }
 
-    void init_defaults(const cam_generator_config_t& cam_generator_config, size_t resolution)
+    void init_defaults(const cam_generator_config_t& cam_generator_config)
     {
-        panel_->init_defaults(cam_generator_config, resolution);
+        panel_->init_defaults(cam_generator_config);
     }
 
 private:
@@ -71,7 +71,7 @@ public:
         Bind(wxEVT_BUTTON, &MyApp::OnExportButton, this, JCP_EXPORT_BTN);
 
         cam_generator_config_ = cam_generator_config_t::get_default();
-        frame_->init_defaults(cam_generator_config_, resolution_);
+        frame_->init_defaults(cam_generator_config_);
 
         update();
 
@@ -85,31 +85,31 @@ public:
 
     void OnExportButton(wxCommandEvent& event)
     {
-        wxString CurrentDocPath;
-
         wxDirDialog* OpenDialog = new wxDirDialog(
             nullptr, "Choose a destination directory");
 
         if (OpenDialog->ShowModal() == wxID_OK)
         {
-            CurrentDocPath = OpenDialog->GetPath();
+            handle_export(OpenDialog->GetPath());
         }
 
-        wxString file_name_left(CurrentDocPath + "\\cam_profile_left.csv");
-        wxString file_name_right(CurrentDocPath + "\\cam_profile_right.csv");
+        OpenDialog->Destroy();
+    }
+
+    void handle_export(const wxString& current_doc_path)
+    {
+
+        wxString file_name_left(current_doc_path + "\\cam_profile_left.csv");
+        wxString file_name_right(current_doc_path + "\\cam_profile_right.csv");
 
         csv_profile_exporter exporter(file_name_left, file_name_right);
-
         exporter.write_profile(profiles_.cam_path_);
-
-        OpenDialog->Destroy();
-
 
         wxMessageDialog open_dir_box(nullptr, "Open containing folder", "Files export complete", wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
         open_dir_box.SetYesNoLabels(_("&Show in folder"), _("&Done"));
         if (open_dir_box.ShowModal() == wxID_YES)
         {
-            wxLaunchDefaultApplication(CurrentDocPath);
+            wxLaunchDefaultApplication(current_doc_path);
         }
     }
 
@@ -119,11 +119,10 @@ private:
         cam_generator_config_ = frame_->get_config();
         profiles_ = std::move(cam_generator_.generate(cam_generator_config_));
 
-        frame_->draw();
+        frame_->draw(profiles_);
     }
 
     MyFrame* frame_;
-    size_t resolution_ = 100;
     cam_generator_config_t cam_generator_config_;
     profiles_generator cam_generator_;
     assembly_profiles_t profiles_;
