@@ -8,6 +8,18 @@
 
 using point_t = wykobi::point2d<float>;
 
+struct resolution_t
+{
+    using value_type = size_t;
+
+    value_type get_size() const
+    {
+        return 2 * resolution_ + 1;
+    }
+
+    value_type resolution_;
+};
+
 class profile_t
 {
 public:
@@ -16,10 +28,16 @@ public:
     using reverse_iterator = std::vector<point_t>::reverse_iterator;
     using const_reverse_iterator = std::vector<point_t>::const_reverse_iterator;
 
-    profile_t(size_t resolution = 0)
-    : points_(2 * resolution + 1)
+    profile_t(size_t size = 0)
+    : points_(size)
     {
     }
+
+    explicit profile_t(resolution_t resolution)
+    : points_(resolution.get_size())
+    {
+    }
+
     profile_t(const profile_t& other) = delete;
     profile_t& operator=(const profile_t& other) = delete;
 
@@ -71,6 +89,11 @@ public:
         return points_.size();
     }
 
+    point_t& operator[](size_t index)
+    {
+        return points_[index];
+    }
+
     const point_t& operator[](size_t index) const
     {
         return points_[index];
@@ -100,6 +123,16 @@ struct assembly_profiles_t
       joystick_pivot_(other.joystick_pivot_)
     {
     };
+
+    profile_t get_pivots_as_path() const
+    {
+        profile_t pivots(2);
+
+        pivots[0] = cam_pivot_;
+        pivots[1] = joystick_pivot_;
+
+        return pivots;
+    }
 
     assembly_profiles_t& operator=(assembly_profiles_t&& other)
     {

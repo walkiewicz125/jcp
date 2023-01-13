@@ -11,8 +11,8 @@ class profiles_generator
 public:
     assembly_profiles_t generate(const cam_generator_config_t& config) const
     {
-        profile_t cam_path(config.resolution_);
-        profile_t joystick_path(config.resolution_);
+        profile_t cam_path(resolution_t{config.resolution_});
+        profile_t joystick_path(resolution_t{config.resolution_});
 
         profile_t::iterator cam_profile_point = cam_path.begin();
         profile_t::iterator joystick_point = joystick_path.begin();

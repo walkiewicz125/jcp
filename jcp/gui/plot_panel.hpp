@@ -53,21 +53,24 @@ public:
 
         mathplot_ = new mpWindow(this, wxID_ANY);
 
-
         wxPen mypen(*wxRED, 5, wxPENSTYLE_SOLID);
         joystick_points_frame_ = new profile_frame();
         joystick_points_frame_->SetPen(mypen);
         mathplot_->AddLayer(joystick_points_frame_);
-
 
         wxPen mypen2(*wxGREEN, 5, wxPENSTYLE_SOLID);
         cam_points_frame_ = new profile_frame();
         cam_points_frame_->SetPen(mypen2);
         mathplot_->AddLayer(cam_points_frame_);
 
+        wxPen mypen3(*wxBLUE, 5, wxPENSTYLE_SOLID);
+        pivots_points_frame_ = new profile_frame();
+        pivots_points_frame_->SetPen(mypen3);
+        mathplot_->AddLayer(pivots_points_frame_);
+
         joystick_points_frame_->SetName(wxT("joystick"));
         cam_points_frame_->SetName(wxT("cam"));
-
+        pivots_points_frame_->SetName(wxT("pivots"));
 
         wxFont graphFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
         xaxis_layer_ = new mpScaleX(wxT("X"), mpALIGN_BOTTOM, false, mpX_NORMAL);
@@ -93,6 +96,7 @@ public:
     {
         joystick_points_frame_->update(profiles.joystick_path_);
         cam_points_frame_->update(profiles.cam_path_);
+        pivots_points_frame_->update(profiles.get_pivots_as_path());
         mathplot_->Refresh();
         mathplot_->LockAspect();
         mathplot_->Fit();
@@ -104,6 +108,7 @@ private:
     wxSizer* main_sizer_vertical_;
     profile_frame* joystick_points_frame_;
     profile_frame* cam_points_frame_;
+    profile_frame* pivots_points_frame_;
     mpScaleX* xaxis_layer_;
     mpScaleY* yaxis_layer_;
 };

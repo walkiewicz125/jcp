@@ -25,7 +25,7 @@ struct cam_generator_config_t
         conf.joystick_gimbal_range_ = 30.0f;
         conf.joystick_lever_length_ = 100.0f;
         conf.joystick_pivot_ = wykobi::make_point<float>(0.0f, 0.0f);
-        conf.resolution_ = 1000;
+        conf.resolution_ = 100;
         return conf;
     }
 };

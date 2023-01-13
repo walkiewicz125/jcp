@@ -16,11 +16,10 @@
 class MyFrame: public wxFrame
 {
 public:
-    MyFrame(const assembly_profiles_t& profiles,
-            const wxString& title, const wxPoint& pos, const wxSize& size)
+    MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
         : wxFrame(NULL, wxID_ANY, title, pos, size)
     {
-        panel_ = new ControlPlotViewPanel(this, wxID_ANY);
+        panel_ = new ControlPlotViewPanel(this, wxID_ANY, wxDefaultPosition, size);
 
         sizer_ = new wxBoxSizer(wxHORIZONTAL);
         sizer_->Add(panel_, 1, wxEXPAND, 0);
@@ -62,9 +61,8 @@ public:
 
     virtual bool OnInit()
     {
-        frame_ = new MyFrame(profiles_,
-                             "JoystickCamProfiler",
-                             wxPoint(50, 50), wxSize(450, 340));
+        frame_ = new MyFrame("JoystickCamProfiler",
+                             wxPoint(50, 50), wxSize(1200, 800));
         frame_->Show( true );
 
         Bind(wxEVT_BUTTON, &MyApp::OnApplyButton, this, JCP_APPLY_BTN);
@@ -78,12 +76,12 @@ public:
         return true;
     }
 
-    void OnApplyButton(wxCommandEvent& event)
+    void OnApplyButton(wxCommandEvent& WXUNUSED(event))
     {
         update();
     }
 
-    void OnExportButton(wxCommandEvent& event)
+    void OnExportButton(wxCommandEvent& WXUNUSED(event))
     {
         wxDirDialog* OpenDialog = new wxDirDialog(
             nullptr, "Choose a destination directory");

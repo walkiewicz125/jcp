@@ -26,8 +26,8 @@ public:
         main_sizer_ = new wxBoxSizer(wxVERTICAL);
         main_sizer_->Add(control_plot_splitter_, 1, wxEXPAND, 0);
 
-        ctrl_panel_ = new ControlPanel(control_plot_splitter_, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
-        plot_panel_ = new PlotPanel(control_plot_splitter_, wxID_ANY, wxDefaultPosition, wxSize(200, 200));
+        ctrl_panel_ = new ControlPanel(control_plot_splitter_, wxID_ANY, wxDefaultPosition);
+        plot_panel_ = new PlotPanel(control_plot_splitter_, wxID_ANY, wxDefaultPosition);
 
         control_plot_splitter_->SplitVertically(ctrl_panel_, plot_panel_);
 
@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    double sash_gravity_ = 0.5;
+    double sash_gravity_ = 0.25;
     int min_pane_size_ = 50;
 
     ControlPanel* ctrl_panel_;
